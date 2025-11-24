@@ -1,5 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler,LabelEncoder, OrdinalEncoder
 from sklearn.pipeline import Pipeline
 import pandas as pd
 

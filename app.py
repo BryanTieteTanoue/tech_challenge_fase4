@@ -164,8 +164,9 @@ if st.button("Adicionar Pesquisa"):
         transporte_num = map_transporte[input_transporte]
 
         # Monta lista final tratada
+
+
         nova_pesquisa = [
-            0,  # pode ser ID
             sexo_num,
             input_idade,
             input_altura,
@@ -193,6 +194,7 @@ if st.button("Adicionar Pesquisa"):
 
         #Aplicando a pipeline
         teste_novo_paciente = pipeline_teste(teste_novo_paciente)
+        teste_novo_paciente = teste_novo_paciente.loc[:, teste_novo_paciente.columns.difference(['historico_familiar_cod','calorias_frequente_cod','fuma_cod','genero','vegetais_refeicao', 'entre_refeicao','frequencia_alcool','nvl_obsidade','entre_refeicao_ord','frequencia_alcool_ord'])]
 
         #retirando a coluna target
         cliente_pred = teste_novo_paciente.drop(['nvl_obsidade_ord'], axis=1)
