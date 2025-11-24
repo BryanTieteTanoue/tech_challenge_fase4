@@ -119,6 +119,15 @@ def pipeline_teste(df):
     df_pipeline = pipeline.fit_transform(df)
     return df_pipeline
 
+map_obesidade = {
+    0: "abaixo do peso",              # Insufficient_Weight
+    1: "peso normal",                 # Normal_Weight
+    2: "sobrepeso I",                 # Overweight_Level_I
+    3: "sobrepeso II",                # Overweight_Level_II
+    4: "obesidade I",                 # Obesity_Type_I
+    5: "obesidade II",                # Obesity_Type_II
+    6: "obesidade III"                # Obesity_Type_III
+}
 
 if st.button("Adicionar Pesquisa"):
 
@@ -202,9 +211,44 @@ if st.button("Adicionar Pesquisa"):
         model = joblib.load('RandomForest.joblib')
         final_pred = model.predict(cliente_pred)
 
-        # Mostra resultado
+        predicaoGerada=-1
+        predicaoGerada = final_pred[-1].astype(int)
+
+        # Mostra resultado retirar os "st.write"
         #st.success("✅ Dados adicionados com sucesso!")
         st.write("**Lista tratada:**", nova_pesquisa)
+        st.write("**Resultado da predição:**", predicaoGerada)
+        st.write("**Obesidade:**", map_obesidade[predicaoGerada])
 
+        # Tratamento das mensagens
+        if predicaoGerada == 0:
+            st.warning("Você está abaixo do peso. É importante avaliar se existe alguma causa nutricional ou metabólica.")
+            st.info("Busque auxílio nutricional para alcançar um peso saudável.")
 
-        st.write("**PREDIIICAOOOOO:**", final_pred[-1])
+        elif predicaoGerada == 1:
+            st.success("Parabéns! Você está dentro do peso considerado saudável.")
+            st.info("Continue mantendo bons hábitos alimentares e atividade física!")
+
+        elif predicaoGerada == 2:
+            st.warning("Atenção: você está em sobrepeso nível I.")
+            st.info("Revisar alimentação e aumentar atividades físicas pode ajudar.")
+
+        elif predicaoGerada == 3:
+            st.warning("Atenção: você está em sobrepeso nível II.")
+            st.info("Pode ser um bom momento para acompanhamento nutricional.")
+
+        elif predicaoGerada == 4:
+            st.error("Risco alto: obesidade nível I.")
+            st.info("Procure orientação profissional para reduzir riscos à saúde.")
+
+        elif predicaoGerada == 5:
+            st.error("Risco muito alto: obesidade nível II.")
+            st.warning("Mudanças de estilo de vida e acompanhamento médico são importantes.")
+
+        elif predicaoGerada == 6:
+            st.error("Risco crítico: obesidade nível III.")
+            st.warning("Recomendado acompanhamento médico especializado.")
+
+        else:
+            st.error("Erro na criação da predição para estes valores, por favor realizar uma nova consulta.")
+            
