@@ -2,6 +2,19 @@ import streamlit as st
 import pandas as pd
 
 
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+import joblib
+from joblib import load
+from utils import RenomearColunasTransf, MultiLabelEncoder, YesNoToBinaryTransformer, MinMax, OrdinalEncodingTransformer, DummyEncoderTransformer, ColumnsToIntTransformer
+
+
+#importando base (alterar para caminho do GIT)
+base = pd.read_csv(r"D:\PosFIAP\ArquivosTC4\Obesity.csv", sep=',')
+#exmplo:
+#dados = pd.read_csv('https://raw.githubusercontent.com/alura-tech/alura-tech-pos-data-science-credit-scoring-streamlit/main/df_clean.csv')
+
+
 st.write('# Pesquisa sobre obesidade')
 
 
@@ -74,6 +87,39 @@ input_transporte = st.selectbox('Meio de transporte habitual', ("Selecione...", 
 # 🔘 Botão e tratamento dos dados
 # ===========================================================
 
+
+
+# Separando os dados em treino e teste
+def data_split(df):
+    treino_df, teste_df = train_test_split(df, test_size=0.2, random_state=42)
+    return treino_df.reset_index(drop=True), teste_df.reset_index(drop=True)
+
+treino_df, teste_df = data_split(base)
+
+def pipeline_teste(df):
+
+    pipeline = Pipeline([
+        ('renomear', RenomearColunasTransf()),
+        ('min_max_scaler',MinMax()),
+        ('ordinal_feature', OrdinalEncodingTransformer()),
+        ('label_encoding', MultiLabelEncoder(
+            columns=[
+                'historico_familiar',
+                'calorias_frequente',
+                'fuma',
+                'genero',
+                'monitora_calorias'
+            ]
+        )),
+        ('transformarBinario',YesNoToBinaryTransformer()),
+        ('onehot_transporte', DummyEncoderTransformer()),
+        ('ajustandoColunasTransporte',ColumnsToIntTransformer()),
+    # ... outros transformers ou modelos ...
+    ])
+    df_pipeline = pipeline.fit_transform(df)
+    return df_pipeline
+
+
 if st.button("Adicionar Pesquisa"):
 
     campos_invalidos = []
@@ -135,10 +181,28 @@ if st.button("Adicionar Pesquisa"):
             atividade_num,
             dispositivo_num,
             alcoolica_num,
-            transporte_num 
-            #####TRATAR OBESIDADE#####       
+            transporte_num,
+            0 #####TRATAR OBESIDADE#####
         ]
 
+        #Criando novo paciente
+        paciente_predict_df = pd.DataFrame([nova_pesquisa],columns=teste_df.columns)
+
+        #Concatenando novo paciente ao dataframe dos dados de teste
+        teste_novo_paciente  = pd.concat([teste_df,paciente_predict_df],ignore_index=True)
+
+        #Aplicando a pipeline
+        teste_novo_paciente = pipeline_teste(teste_novo_paciente)
+
+        #retirando a coluna target
+        cliente_pred = teste_novo_paciente.drop(['nvl_obsidade_ord'], axis=1)
+
+        model = joblib.load('RandomForest.joblib')
+        final_pred = model.predict(cliente_pred)
+
         # Mostra resultado
-        st.success("✅ Dados adicionados com sucesso!")
+        #st.success("✅ Dados adicionados com sucesso!")
         st.write("**Lista tratada:**", nova_pesquisa)
+
+
+        st.write("**PREDIIICAOOOOO:**", final_pred[-1])
