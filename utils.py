@@ -78,9 +78,9 @@ class YesNoToBinaryTransformer(BaseEstimator, TransformerMixin):
 
         return X_
     
+"""     def __init__(self,min_max_scaler=['idade','altura','peso','vegetais_refeicao','refeicoes_diaria','litros_agua','frequencia_atividade']): """    
 class MinMax(BaseEstimator, TransformerMixin):
-    def __init__(self,min_max_scaler=['idade','altura','peso','vegetais_refeicao'
-                                      ,'refeicoes_diaria','litros_agua','frequencia_atividade']):
+    def __init__(self,min_max_scaler=['vegetais_refeicao','refeicoes_diaria','litros_agua','frequencia_atividade']):
         self.min_max_scaler = min_max_scaler
 
     def fit(self, df):

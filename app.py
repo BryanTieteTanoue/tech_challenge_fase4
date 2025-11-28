@@ -14,6 +14,8 @@ base = pd.read_csv(r"D:\PosFIAP\ArquivosTC4\Obesity.csv", sep=',')
 #exmplo:
 #dados = pd.read_csv('https://raw.githubusercontent.com/alura-tech/alura-tech-pos-data-science-credit-scoring-streamlit/main/df_clean.csv')
 
+st.set_page_config(page_title="Levantamento sobre dados de obesidade")
+st.title("Levantamento sobre dados de obesidade")
 
 st.write('# Pesquisa sobre obesidade')
 
@@ -111,7 +113,7 @@ def pipeline_teste(df):
                 'monitora_calorias'
             ]
         )),
-        ('transformarBinario',YesNoToBinaryTransformer()),
+        #('transformarBinario',YesNoToBinaryTransformer()), #ja esta tratado no MultiLabelEncoder
         ('onehot_transporte', DummyEncoderTransformer()),
         ('ajustandoColunasTransporte',ColumnsToIntTransformer()),
     # ... outros transformers ou modelos ...
@@ -203,12 +205,14 @@ if st.button("Adicionar Pesquisa"):
 
         #Aplicando a pipeline
         teste_novo_paciente = pipeline_teste(teste_novo_paciente)
-        teste_novo_paciente = teste_novo_paciente.loc[:, teste_novo_paciente.columns.difference(['historico_familiar_cod','calorias_frequente_cod','fuma_cod','genero','vegetais_refeicao', 'entre_refeicao','frequencia_alcool','nvl_obsidade','entre_refeicao_ord','frequencia_alcool_ord'])]
+        #teste_novo_paciente = teste_novo_paciente.loc[:, teste_novo_paciente.columns.difference(['historico_familiar_cod','calorias_frequente_cod','fuma_cod','genero','vegetais_refeicao', 'entre_refeicao','frequencia_alcool','nvl_obsidade','entre_refeicao_ord','frequencia_alcool_ord'])]
 
         #retirando a coluna target
-        cliente_pred = teste_novo_paciente.drop(['nvl_obsidade_ord'], axis=1)
+        #cliente_pred = teste_novo_paciente.drop(['nvl_obsidade_ord'], axis=1)
+        cliente_pred = teste_novo_paciente[['peso','historico_familiar_cod', 'idade', 'calorias_frequente_cod', 'entre_refeicao_ord']]
 
-        model = joblib.load('RandomForest.joblib')
+
+        model = joblib.load('RandomForest2.joblib')
         final_pred = model.predict(cliente_pred)
 
         predicaoGerada=-1
