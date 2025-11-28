@@ -10,7 +10,7 @@ from utils import RenomearColunasTransf, MultiLabelEncoder, YesNoToBinaryTransfo
 
 
 #importando base (alterar para caminho do GIT)
-base = pd.read_csv(r"D:\PosFIAP\ArquivosTC4\Obesity.csv", sep=',')
+base = pd.read_csv(r"https://raw.githubusercontent.com/vbomura/TC4Final/refs/heads/main/arquivos/Obesity.csv", sep=',')
 #exmplo:
 #dados = pd.read_csv('https://raw.githubusercontent.com/alura-tech/alura-tech-pos-data-science-credit-scoring-streamlit/main/df_clean.csv')
 
