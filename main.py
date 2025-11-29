@@ -1,25 +1,25 @@
 import streamlit as st
 #from streamlit_option_menu import option_menu # Você pode instalar essa biblioteca para personalizar ainda mais
-from pages import pesquisa, sobre # Importe as páginas criadas na pasta 'pages'
+import importlib
+from modules import pesquisa, sobre, obesity_dashboard, imagem, principal # Importe as páginas criadas na pasta 'pages'
 
-import sys
-import os
-sys.path.append(os.path.dirname(__file__))
+st.sidebar.title("Menu")
+
+# MAPEAMENTO PERSONALIZADO
+paginas = {
+    "🏠 Página Inicial": "modules.principal",
+    "📝 Questionário": "modules.pesquisa",
+    "📊 Dashboard": "modules.obesity_dashboard",    
+    "ℹ️ Predição": "modules.imagem"
+}
+
+# SELECTBOX MOSTRA APENAS NOMES BONITOS
+escolha = st.sidebar.selectbox("", list(paginas.keys()))
+
+# IMPORTA O ARQUIVO CORRESPONDENTE
+modulo = importlib.import_module(paginas[escolha])
+
+# CADA ARQUIVO EM pages/ PRECISA TER UMA FUNÇÃO app()
+modulo.app()
 
 
-# Define o layout da página principal usando o Streamlit
-st.set_page_config(page_title="Navegação Personalizada", layout="wide")
-
-# Define a navegação com a barra lateral
-selected = st.sidebar.selectbox("Selecione a página", ["Página Principal", "Pesquisa", "Sobre"])
-
-# Exibe o conteúdo da página selecionada
-if selected == "Página Principal":
-    st.title("Página Principal")
-    st.write("Bem-vindo à página principal!")
-elif selected == "Pesquisa":
-    pesquisa.main() # Chama a função 'main' dentro do arquivo 'usuarios.py'
-elif selected == "Sobre":
-    sobre.main() # Chama a função 'main' dentro do arquivo 'sobre.py'
-    
-    
